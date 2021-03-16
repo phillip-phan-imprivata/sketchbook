@@ -1,16 +1,24 @@
 import React, { useContext, useEffect, useState } from "react"
-import { useHistory } from "react-router-dom"
+import { useHistory, useParams } from "react-router-dom"
+import { GridContext } from "../grid/GridProvider"
 import "./SketchPad.css"
 import { SketchContext } from "./SketchProvider"
 
 export const SketchPad = (props) => {
-  const {sketches, getSketches, saveSketch} = useContext(SketchContext)
+  const {sketches, getSketches, saveSketch, getSketchById, updateSketch} = useContext(SketchContext)
+  const {grids, getGrids} = useContext(GridContext)
 
+  const [sketch, setSketch] = useState({
+    name: "",
+    userId: 0,
+    grid: []
+  })
+
+  const {sketchId} = useParams()
   const history = useHistory()
-
   const userId = parseInt(sessionStorage.sketch_user)
-  let grid = []
-  let coloredGridId = []
+
+  let initialGrid = []
 
   const gridStyle = {
     gridTemplateColumns: `repeat(${props.size}, 1fr)`,
@@ -18,40 +26,86 @@ export const SketchPad = (props) => {
     height: "600px",
     width: "600px"
   }
-
+  
   const handleSaveGrid = (event) => {
-    const newSketch = {
-      userId: userId,
-      grid: coloredGridId
+    if (sketch.name === "") {
+      alert("Name your sketch before saving")
+    } else {
+      if (sketchId) {
+        updateSketch({
+          id: sketch.id,
+          name: sketch.name,
+          userId: sketch.userId,
+        })
+        .then(() => history.push("/sketchbook"))
+      } else {
+        const newSketch = {
+          name: sketch.name,
+          userId: userId,
+          grid: sketch.grid
+        }
+
+        saveSketch(newSketch)
+        .then(() => history.push("/sketchbook"))
+      }
     }
-    saveSketch(newSketch)
-    .then(history.push("/sketchbook"))
   }
 
-  const handleGridHover = (event) => {
+  const handleClearGrid = (event) => {
+    initialGrid = []
+    setSketch({
+      grid: []
+    })
+  }
+  
+  const handleGridDrag = (event) => {
     const chosenItem = event.target
     const [prefix, id] = event.target.id.split("--")
-
+    
     chosenItem.className = "grid color"
-
-    if (coloredGridId.includes(parseInt(id)) === false){
-      coloredGridId.push(parseInt(id))
+    
+    if (sketch.grid.includes(parseInt(id)) === false){
+      sketch.grid.push(parseInt(id))
     }
   }
-
+  
   const createGrid = (size) => {
-    for (let i = 1; i <= size * size; i++){
-      grid.push(<div className="grid" key={i} id={`grid--${i}`} onMouseOver={handleGridHover}></div>)
+    for (let i = 1; i<= size * size; i++){
+      if (sketch.grid.includes(i)){
+        initialGrid.push(<div className="grid color" key={i} id={`grid--${i}`} draggable="true" onDragOver={handleGridDrag}></div>)
+      } else {
+        initialGrid.push(<div className="grid" key={i} id={`grid--${i}`} draggable="true" onDragOver={handleGridDrag}></div>)
+      }
     }
-    return grid
+    return initialGrid
   }
+  
+  useEffect(() => {
+    getGrids()
+  }, [])
+
+  useEffect(() => {
+    if (sketchId) {
+      getSketchById(sketchId)
+      .then(sketch => {
+        let editSketch = { ...sketch }
+        let matchingGrid = grids.filter(grid => grid.sketchId === editSketch.id)
+        matchingGrid = matchingGrid.map(grid => {
+          return grid.gridId
+        })
+        editSketch.grid = matchingGrid
+        setSketch(editSketch)
+      })
+    }
+  }, [grids])
 
   return (
     <>
+    <input type="text" id="name" defaultValue={sketch.name} placeholder={sketchId ? sketch.name : "New Sketch Name"} onChange={(event) => sketch.name = event.target.value}/>
     <div className="container" style={gridStyle}>
       {createGrid(props.size)}
     </div>
-    <button className="grid__clear">Clear Sketch</button>
+    <button className="grid__clear" onClick={handleClearGrid}>Clear Sketch</button>
     <button className="grid__save" onClick={handleSaveGrid}>Save Sketch</button>
     </>
   )

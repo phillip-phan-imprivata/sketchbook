@@ -1,5 +1,7 @@
 import React, { useContext, useEffect } from "react"
+import { Sketch } from "../sketch/Sketch"
 import { SketchContext } from "../sketch/SketchProvider"
+import { SketchCard } from "./SketchCard"
 
 export const SketchBook = () => {
   const {sketches, getSketches} = useContext(SketchContext)
@@ -10,7 +12,11 @@ export const SketchBook = () => {
 
   return (
     <div className="sketches">
-    
+     {
+       sketches.map(sketch => {
+         return <SketchCard key={sketch.id} sketch={sketch} />
+       })
+     }
     </div>
   )
 }
