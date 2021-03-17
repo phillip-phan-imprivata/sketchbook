@@ -9,16 +9,16 @@ export const SketchPad = (props) => {
   const {grids, getGrids, saveGrid} = useContext(GridContext)
 
   const [isLoading, setIsLoading] = useState(true);
+  const userId = parseInt(sessionStorage.sketch_user)
 
   const [sketch, setSketch] = useState({
     name: "",
-    userId: 0,
+    userId: userId,
     grid: []
   })
 
   const {sketchId} = useParams()
   const history = useHistory()
-  const userId = parseInt(sessionStorage.sketch_user)
 
   let initialGrid = []
 
@@ -48,8 +48,9 @@ export const SketchPad = (props) => {
           userId: userId,
           grid: sketch.grid
         }
-        
+
         saveSketch(newSketch)
+        .then(() => history.push("/sketchbook"))
       }
     }
   }

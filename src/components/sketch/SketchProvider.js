@@ -14,9 +14,10 @@ export const SketchProvider = (props) => {
   }
 
   const saveSketch = (obj) => {
+    debugger
     const savedSketch = {
       name: obj.name,
-      userId: obj.userId
+      userId: obj.userId,
     }
     return fetch("http://localhost:8088/sketches", {
       method: "POST",

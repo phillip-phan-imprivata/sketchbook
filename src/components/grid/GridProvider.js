@@ -12,7 +12,7 @@ export const GridProvider = (props) => {
   }
 
   const saveGrid = (obj) => {
-    fetch("http://localhost:8088/grids", {
+    return fetch("http://localhost:8088/grids", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
