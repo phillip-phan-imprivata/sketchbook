@@ -6,7 +6,9 @@ import { SketchContext } from "./SketchProvider"
 
 export const SketchPad = (props) => {
   const {sketches, getSketches, saveSketch, getSketchById, updateSketch} = useContext(SketchContext)
-  const {grids, getGrids} = useContext(GridContext)
+  const {grids, getGrids, saveGrid} = useContext(GridContext)
+
+  const [isLoading, setIsLoading] = useState(true);
 
   const [sketch, setSketch] = useState({
     name: "",
@@ -31,6 +33,8 @@ export const SketchPad = (props) => {
     if (sketch.name === "") {
       alert("Name your sketch before saving")
     } else {
+      setIsLoading(true)
+
       if (sketchId) {
         updateSketch({
           id: sketch.id,
@@ -44,9 +48,8 @@ export const SketchPad = (props) => {
           userId: userId,
           grid: sketch.grid
         }
-
+        
         saveSketch(newSketch)
-        .then(() => history.push("/sketchbook"))
       }
     }
   }
@@ -56,6 +59,10 @@ export const SketchPad = (props) => {
     setSketch({
       grid: []
     })
+  }
+
+  const handleDragStart = (event) => {
+    event.dataTransfer.setDragImage(new Image(), 0, 0)
   }
   
   const handleGridDrag = (event) => {
@@ -72,9 +79,9 @@ export const SketchPad = (props) => {
   const createGrid = (size) => {
     for (let i = 1; i<= size * size; i++){
       if (sketch.grid.includes(i)){
-        initialGrid.push(<div className="grid color" key={i} id={`grid--${i}`} draggable="true" onDragOver={handleGridDrag}></div>)
+        initialGrid.push(<div className="grid color" key={i} id={`grid--${i}`} draggable="true" onDragStart={handleDragStart} onDragOver={handleGridDrag}></div>)
       } else {
-        initialGrid.push(<div className="grid" key={i} id={`grid--${i}`} draggable="true" onDragOver={handleGridDrag}></div>)
+        initialGrid.push(<div className="grid" key={i} id={`grid--${i}`} draggable="true" onDragStart={handleDragStart} onDragOver={handleGridDrag}></div>)
       }
     }
     return initialGrid
@@ -95,7 +102,10 @@ export const SketchPad = (props) => {
         })
         editSketch.grid = matchingGrid
         setSketch(editSketch)
+        setIsLoading(false)
       })
+    } else {
+      setIsLoading(false)
     }
   }, [grids])
 
@@ -106,7 +116,7 @@ export const SketchPad = (props) => {
       {createGrid(props.size)}
     </div>
     <button className="grid__clear" onClick={handleClearGrid}>Clear Sketch</button>
-    <button className="grid__save" onClick={handleSaveGrid}>Save Sketch</button>
+    <button className="grid__save" disabled={isLoading} onClick={handleSaveGrid}>Save Sketch</button>
     </>
   )
 }

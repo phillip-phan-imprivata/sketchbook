@@ -27,14 +27,15 @@ export const SketchProvider = (props) => {
     })
     .then(res => res.json())
     .then(sketch => {
-      obj.grid.map(gridItem => {
-        saveGrid({
-          sketchId: sketch.id,
-          gridId: gridItem
+      Promise.all(
+        obj.grid.map(async gridItem => {
+          await saveGrid({
+            sketchId: sketch.id,
+            gridId: gridItem
+          })
         })
-      })
+      )
     })
-    .then(getSketches)
   }
 
   const updateSketch = (sketch) => {
@@ -45,7 +46,6 @@ export const SketchProvider = (props) => {
       },
       body: JSON.stringify(sketch)
     })
-    .then(getSketches)
   }
 
   const getSketchById = (id) => {

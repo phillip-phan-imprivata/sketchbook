@@ -11,15 +11,14 @@ export const GridProvider = (props) => {
     .then(setGrids)
   }
 
-  const saveGrid = async (obj) => {
-    return await fetch("http://localhost:8088/grids", {
+  const saveGrid = (obj) => {
+    fetch("http://localhost:8088/grids", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
       },
       body: JSON.stringify(obj)
     })
-    .then(getGrids)
   }
 
   return (

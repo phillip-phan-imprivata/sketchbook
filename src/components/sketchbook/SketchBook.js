@@ -1,5 +1,4 @@
 import React, { useContext, useEffect } from "react"
-import { Sketch } from "../sketch/Sketch"
 import { SketchContext } from "../sketch/SketchProvider"
 import { SketchCard } from "./SketchCard"
 
