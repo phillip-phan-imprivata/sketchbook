@@ -9,7 +9,7 @@ export const SketchPad = (props) => {
   const {grids, getGrids, saveGrid} = useContext(GridContext)
 
   const [isLoading, setIsLoading] = useState(true);
-  const userId = parseInt(sessionStorage.sketch_user)
+  const userId = parseInt(sessionStorage.app_user_id)
 
   const [sketch, setSketch] = useState({
     name: "",
@@ -40,6 +40,7 @@ export const SketchPad = (props) => {
           id: sketch.id,
           name: sketch.name,
           userId: sketch.userId,
+          grid: sketch.grid
         })
         .then(() => history.push("/sketchbook"))
       } else {
@@ -99,7 +100,7 @@ export const SketchPad = (props) => {
         let editSketch = { ...sketch }
         let matchingGrid = grids.filter(grid => grid.sketchId === editSketch.id)
         matchingGrid = matchingGrid.map(grid => {
-          return grid.gridId
+          return grid.blockId
         })
         editSketch.grid = matchingGrid
         setSketch(editSketch)

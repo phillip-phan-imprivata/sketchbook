@@ -4,8 +4,9 @@ import { GridContext } from "../grid/GridProvider"
 export const SketchContext = createContext()
 
 export const SketchProvider = (props) => {
-  const {saveGrid} = useContext(GridContext)
+  const {saveGrid, deleteGrid, getGrids, grids} = useContext(GridContext)
   const [sketches, setSketches] = useState([])
+  const [isLoading, setIsLoading] = useState(false)
 
   const getSketches = () => {
     return fetch("http://localhost:8088/sketches")
@@ -14,7 +15,6 @@ export const SketchProvider = (props) => {
   }
 
   const saveSketch = (obj) => {
-    debugger
     const savedSketch = {
       name: obj.name,
       userId: obj.userId,
@@ -28,25 +28,57 @@ export const SketchProvider = (props) => {
     })
     .then(res => res.json())
     .then(sketch => {
-      Promise.all(
-        obj.grid.map(async gridItem => {
-          await saveGrid({
+      obj.grid.reduce(
+        (chain, block) => 
+          chain.then(() => saveGrid({
             sketchId: sketch.id,
-            gridId: gridItem
-          })
-        })
+            blockId: block
+          })),
+          Promise.resolve()
       )
     })
   }
 
-  const updateSketch = (sketch) => {
-    return fetch(`http://localhost:8088/sketches/${sketch.id}`, {
+  const updateSketch = (obj) => {
+    const updatedSketch = {
+      id: obj.id,
+      name: obj.name,
+      userId: obj.userId
+    }
+    return fetch(`http://localhost:8088/sketches/${obj.id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify(sketch)
+      body: JSON.stringify(updatedSketch)
     })
+    .then(res => res.json())
+    .then(async sketch => {
+      await getGrids()
+      let matchingGrids = grids.filter(grid => grid.sketchId === sketch.id)
+      Promise.all(
+        matchingGrids.map(async grid => {
+          await deleteGrid(grid.id)
+        })
+      )
+    })
+    .then(() => {
+      obj.grid.reduce(
+        (chain, block) => 
+          chain.then(() => saveGrid({
+            sketchId: obj.id,
+            blockId: block
+          })),
+          Promise.resolve()
+      )
+    })
+  }
+
+  const deleteSketch = (id) => {
+    return fetch(`http://localhost:8088/sketches/${id}`, {
+      method: "DELETE"
+    })
+    .then(getSketches)
   }
 
   const getSketchById = (id) => {
@@ -56,7 +88,7 @@ export const SketchProvider = (props) => {
 
   return (
     <SketchContext.Provider value={{
-      sketches, getSketches, saveSketch, updateSketch, getSketchById
+      sketches, getSketches, saveSketch, updateSketch, getSketchById, deleteSketch
     }}>
       {props.children}
     </SketchContext.Provider>
