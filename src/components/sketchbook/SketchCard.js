@@ -16,17 +16,17 @@ export const SketchCard = (props) => {
 
   const handleDeleteSketch = (event) => {
     const [prefix, id] = event.target.id.split("--")
+    
+    deleteSketch(parseInt(id))
+    // let matchingGrids = grids.filter(grid => grid.sketchId === parseInt(id))
 
-    let matchingGrids = grids
-    matchingGrids = matchingGrids.filter(grid => grid.sketchId === parseInt(id))
-
-    console.log(matchingGrids)
-    matchingGrids.map(block => deleteGrid(block.id))
-    .then(deleteSketch(parseInt(id)))
     // matchingGrids.reduce((chain, block) =>
+    //   // append the promise creating function to the chain
     //   chain.then(() => 
     //     deleteGrid(block.id)), 
-    //     Promise.resolve())
+    //     // start the promise chain from a resolved promise
+    //     Promise.resolve()
+    // )
     // .then(deleteSketch(parseInt(id)))
   }
 

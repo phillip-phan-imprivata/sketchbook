@@ -3,6 +3,7 @@ import { useHistory, useParams } from "react-router-dom"
 import { GridContext } from "../grid/GridProvider"
 import "./SketchPad.css"
 import { SketchContext } from "./SketchProvider"
+import Button from "react-bootstrap/Button"
 
 export const SketchPad = (props) => {
   const {sketches, getSketches, saveSketch, getSketchById, updateSketch} = useContext(SketchContext)
@@ -88,20 +89,18 @@ export const SketchPad = (props) => {
     }
     return initialGrid
   }
-  
-  useEffect(() => {
-    getGrids()
-  }, [])
 
   useEffect(() => {
     if (sketchId) {
       getSketchById(sketchId)
       .then(sketch => {
-        let editSketch = { ...sketch }
-        let matchingGrid = grids.filter(grid => grid.sketchId === editSketch.id)
-        matchingGrid = matchingGrid.map(grid => {
-          return grid.blockId
-        })
+        let editSketch = {
+          id: sketch.id,
+          name: sketch.name,
+          userId: sketch.userId
+        }
+        console.log(editSketch)
+        let matchingGrid = sketch.grids.map(grid => grid.blockId)
         editSketch.grid = matchingGrid
         setSketch(editSketch)
         setIsLoading(false)
@@ -109,7 +108,7 @@ export const SketchPad = (props) => {
     } else {
       setIsLoading(false)
     }
-  }, [grids])
+  }, [])
 
   return (
     <>
@@ -117,8 +116,8 @@ export const SketchPad = (props) => {
     <div className="container" style={gridStyle}>
       {createGrid(props.size)}
     </div>
-    <button className="grid__clear" onClick={handleClearGrid}>Clear Sketch</button>
-    <button className="grid__save" disabled={isLoading} onClick={handleSaveGrid}>Save Sketch</button>
+    <Button className="grid__clear" onClick={handleClearGrid}>Clear Sketch</Button>
+    <Button className="grid__save" disabled={isLoading} onClick={handleSaveGrid}>Save Sketch</Button>
     </>
   )
 }

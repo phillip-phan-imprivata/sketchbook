@@ -56,11 +56,13 @@ export const SketchProvider = (props) => {
     .then(async sketch => {
       await getGrids()
       let matchingGrids = grids.filter(grid => grid.sketchId === sketch.id)
-      Promise.all(
-        matchingGrids.map(async grid => {
-          await deleteGrid(grid.id)
-        })
-      )
+      matchingGrids.reduce((chain, block) =>
+        // append the promise creating function to the chain
+        chain.then(() => 
+          deleteGrid(block.id)), 
+        // start the promise chain from a resolved promise
+          Promise.resolve()
+    )
     })
     .then(() => {
       obj.grid.reduce(
@@ -82,7 +84,7 @@ export const SketchProvider = (props) => {
   }
 
   const getSketchById = (id) => {
-    return fetch(`http://localhost:8088/sketches/${id}`)
+    return fetch(`http://localhost:8088/sketches/${id}?_embed=grids`)
     .then(res => res.json())
   }
 
