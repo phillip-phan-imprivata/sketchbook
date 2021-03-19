@@ -6,7 +6,6 @@ export const SketchContext = createContext()
 export const SketchProvider = (props) => {
   const {saveGrid, deleteGrid, getGrids, grids} = useContext(GridContext)
   const [sketches, setSketches] = useState([])
-  const [isLoading, setIsLoading] = useState(false)
 
   const getSketches = () => {
     return fetch("http://localhost:8088/sketches")
@@ -30,7 +29,7 @@ export const SketchProvider = (props) => {
     .then(sketch => {
       obj.grid.reduce(
         (chain, block) => 
-          chain.then(() => saveGrid({
+          chain.then(async () => await saveGrid({
             sketchId: sketch.id,
             blockId: block
           })),
@@ -53,17 +52,17 @@ export const SketchProvider = (props) => {
       body: JSON.stringify(updatedSketch)
     })
     .then(res => res.json())
-    .then(async sketch => {
-      await getGrids()
-      let matchingGrids = grids.filter(grid => grid.sketchId === sketch.id)
-      matchingGrids.reduce((chain, block) =>
-        // append the promise creating function to the chain
-        chain.then(() => 
-          deleteGrid(block.id)), 
-        // start the promise chain from a resolved promise
-          Promise.resolve()
-    )
-    })
+    // .then(async sketch => {
+    //   await getGrids()
+    //   let matchingGrids = grids.filter(grid => grid.sketchId === sketch.id)
+    //   matchingGrids.reduce((chain, block) =>
+    //     // append the promise creating function to the chain
+    //     chain.then(() => 
+    //       deleteGrid(block.id)), 
+    //     // start the promise chain from a resolved promise
+    //       Promise.resolve()
+    // )
+    // })
     .then(() => {
       obj.grid.reduce(
         (chain, block) => 

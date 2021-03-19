@@ -1,13 +1,11 @@
 import React, { useContext, useEffect, useState } from "react"
 import { useHistory, useParams } from "react-router-dom"
-import { GridContext } from "../grid/GridProvider"
 import "./SketchPad.css"
 import { SketchContext } from "./SketchProvider"
 import Button from "react-bootstrap/Button"
 
 export const SketchPad = (props) => {
-  const {sketches, getSketches, saveSketch, getSketchById, updateSketch} = useContext(SketchContext)
-  const {grids, getGrids, saveGrid} = useContext(GridContext)
+  const {saveSketch, getSketchById, updateSketch} = useContext(SketchContext)
 
   const [isLoading, setIsLoading] = useState(true);
   const userId = parseInt(sessionStorage.app_user_id)
@@ -17,6 +15,8 @@ export const SketchPad = (props) => {
     userId: userId,
     grid: []
   })
+
+  const [savedGrid, setSavedGrid] = useState([])
 
   const {sketchId} = useParams()
   const history = useHistory()
@@ -37,11 +37,17 @@ export const SketchPad = (props) => {
       setIsLoading(true)
 
       if (sketchId) {
+        const newGrid = sketch.grid.map(block => {
+          if (savedGrid.includes(block) === false) {
+            return block
+          }
+        })
+        
         updateSketch({
           id: sketch.id,
           name: sketch.name,
           userId: sketch.userId,
-          grid: sketch.grid
+          grid: newGrid
         })
         .then(() => history.push("/sketchbook"))
       } else {
@@ -70,7 +76,7 @@ export const SketchPad = (props) => {
   
   const handleGridDrag = (event) => {
     const chosenItem = event.target
-    const [prefix, id] = event.target.id.split("--")
+    const [prefix, id] = chosenItem.id.split("--")
     
     chosenItem.className = "grid color"
     
@@ -81,7 +87,7 @@ export const SketchPad = (props) => {
   
   const createGrid = (size) => {
     for (let i = 1; i<= size * size; i++){
-      if (sketch.grid.includes(i)){
+      if (savedGrid.includes(i)){
         initialGrid.push(<div className="grid color" key={i} id={`grid--${i}`} draggable="true" onDragStart={handleDragStart} onDragOver={handleGridDrag}></div>)
       } else {
         initialGrid.push(<div className="grid" key={i} id={`grid--${i}`} draggable="true" onDragStart={handleDragStart} onDragOver={handleGridDrag}></div>)
@@ -97,11 +103,11 @@ export const SketchPad = (props) => {
         let editSketch = {
           id: sketch.id,
           name: sketch.name,
-          userId: sketch.userId
+          userId: sketch.userId,
+          grid: []
         }
-        console.log(editSketch)
         let matchingGrid = sketch.grids.map(grid => grid.blockId)
-        editSketch.grid = matchingGrid
+        setSavedGrid(matchingGrid)
         setSketch(editSketch)
         setIsLoading(false)
       })
