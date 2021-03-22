@@ -11,6 +11,7 @@ export const SketchCard = (props) => {
   const handleDeleteSketch = (event) => {
     const [prefix, id] = event.target.id.split("--")
 
+    //deletes the sketch from json as well as objects in the grids resource with the matching sketchId
     deleteSketch(parseInt(id))
   }
 
