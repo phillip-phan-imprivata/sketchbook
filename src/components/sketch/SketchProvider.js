@@ -31,6 +31,9 @@ export const SketchProvider = (props) => {
     })
     .then(res => res.json())
     .then(sketch => {
+      //use reduce instead of map because the accumulator depends on the response of the previous return
+      //promises have time to fulfill before moving on to the next
+      //sometimes, promises still gave error, so timer was added to ensure ample time given
       obj.grid.reduce(
         (chain, block) => chain
         .then(async () => {
@@ -42,7 +45,7 @@ export const SketchProvider = (props) => {
           await timer(100)
           //Promise.resolve() is the initial value of the accumulator that returns a fulfilled Promise
           //this return value lets you use .then and starts the chain
-          //.then returns the fulfilled saveGrid promise to the chain (accumulator) and continues the iteration
+          //.then returns the fulfilled saveGrid promise to "chain" (accumulator) and continues the iteration
         }), Promise.resolve()
       )
     })
@@ -63,6 +66,7 @@ export const SketchProvider = (props) => {
     })
     .then(res => res.json())
     .then(() => {
+      //same method as in saveSketch
       obj.grid.reduce(
         (chain, block) => 
           chain.then(async () => {

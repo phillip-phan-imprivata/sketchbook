@@ -14,7 +14,9 @@ export const SketchBook = () => {
   return (
     <div className="sketches">
      {
+       //filters sketches for ones that have the current user's id
        sketches.filter(sketch => sketch.userId === userId)
+       //then maps that array to render each sketch's information
        .map(sketch => {
          return <SketchCard key={sketch.id} sketch={sketch} />
        })
