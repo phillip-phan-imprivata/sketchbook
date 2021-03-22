@@ -13,6 +13,9 @@ export const NavBar = (props) => {
         <li className="nav-item">
           <Link className="nav-link" to="/sketchbook">Sketchbook</Link>
         </li>
+        <li className="nav-item">
+          <Link className="nav-link" onClick={e => sessionStorage.clear()} to="/login">Logout</Link>
+        </li>
       </ul>
     </nav>
   )

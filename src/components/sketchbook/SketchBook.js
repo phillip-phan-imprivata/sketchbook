@@ -5,6 +5,8 @@ import { SketchCard } from "./SketchCard"
 export const SketchBook = () => {
   const {sketches, getSketches} = useContext(SketchContext)
 
+  const userId = parseInt(sessionStorage.app_user_id)
+
   useEffect(() => {
     getSketches()
   }, [])
@@ -12,7 +14,8 @@ export const SketchBook = () => {
   return (
     <div className="sketches">
      {
-       sketches.map(sketch => {
+       sketches.filter(sketch => sketch.userId === userId)
+       .map(sketch => {
          return <SketchCard key={sketch.id} sketch={sketch} />
        })
      }

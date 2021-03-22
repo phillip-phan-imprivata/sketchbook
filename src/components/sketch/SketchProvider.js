@@ -32,16 +32,18 @@ export const SketchProvider = (props) => {
     .then(res => res.json())
     .then(sketch => {
       obj.grid.reduce(
-        (chain, block) => 
-          chain.then(async () => {
-            saveGrid({
-              sketchId: sketch.id,
-              blockId: block
-            })
-            //halts execution of async function until timeout completes
-            await timer(100)
-          }),
-          Promise.resolve()
+        (chain, block) => chain
+        .then(async () => {
+          saveGrid({
+            sketchId: sketch.id,
+            blockId: block
+          })
+          //halts execution of async function until timeout completes
+          await timer(100)
+          //Promise.resolve() is the initial value of the accumulator that returns a fulfilled Promise
+          //this return value lets you use .then and starts the chain
+          //.then returns the fulfilled saveGrid promise to the chain (accumulator) and continues the iteration
+        }), Promise.resolve()
       )
     })
   }

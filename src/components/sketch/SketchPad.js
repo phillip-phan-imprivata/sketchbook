@@ -39,13 +39,11 @@ export const SketchPad = (props) => {
     history.push("/sketchbook")
   }
 
-  let initialGrid = []
-
   const gridStyle = {
     gridTemplateColumns: `repeat(${props.size}, 1fr)`,
     gridTemplateRows: `repeat(${props.size}, 1fr)`,
-    height: "600px",
-    width: "600px"
+    height: "500px",
+    width: "500px"
   }
 
   const handleSaveGrid = (event) => {
@@ -79,30 +77,25 @@ export const SketchPad = (props) => {
       }
     }
   }
-
-  const handleClearGrid = (event) => {
-    initialGrid = []
-    setSketch({
-      grid: []
-    })
-  }
-
+  
   const handleDragStart = (event) => {
     event.dataTransfer.setDragImage(new Image(), 0, 0)
   }
-
+  
   const handleGridDrag = (event) => {
     const chosenItem = event.target
     const [prefix, id] = chosenItem.id.split("--")
-
+    
     chosenItem.className = "grid color"
-
+    
     if (sketch.grid.includes(parseInt(id)) === false) {
       sketch.grid.push(parseInt(id))
     }
   }
-
+  
   const createGrid = (size) => {
+    let initialGrid = []
+    
     for (let i = 1; i <= size * size; i++) {
       if (savedGrid.includes(i)) {
         initialGrid.push(<div className="grid color" key={i} id={`grid--${i}`} draggable="true" onDragStart={handleDragStart} onDragOver={handleGridDrag}></div>)
@@ -139,10 +132,9 @@ export const SketchPad = (props) => {
       <div className="container" style={gridStyle}>
         {createGrid(props.size)}
       </div>
-      <Button className="grid__clear" onClick={handleClearGrid}>Clear Sketch</Button>
       <Button className="grid__save" disabled={isLoading} onClick={handleSaveGrid}>Save Sketch</Button>
       <Modal animation={false} show={show} size="lg" centered >
-        <Modal.Body><ProgressBar animated now={percentage} label={`${Math.round(percentage)}%`} ></ProgressBar></Modal.Body>
+        <Modal.Body><ProgressBar animated now={percentage} label={`Saving: ${Math.round(percentage)}%`} ></ProgressBar></Modal.Body>
       </Modal>
     </>
   )
