@@ -20,6 +20,7 @@ export const SketchPad = (props) => {
 
   const [sketch, setSketch] = useState({
     name: "",
+    size: props.size,
     userId: userId,
     grid: []
   })
@@ -91,6 +92,7 @@ export const SketchPad = (props) => {
         updateSketch({
           id: sketch.id,
           name: sketch.name,
+          size: sketch.size,
           userId: sketch.userId,
           grid: newGrid
         })
@@ -98,6 +100,7 @@ export const SketchPad = (props) => {
       } else {
         const newSketch = {
           name: sketch.name,
+          size: sketch.size,
           userId: userId,
           grid: sketch.grid
         }
@@ -150,11 +153,14 @@ export const SketchPad = (props) => {
 
   return (
     <>
-      <input type="text" id="name" defaultValue={sketch.name} placeholder={sketchId ? sketch.name : "New Sketch Name"} onChange={(event) => sketch.name = event.target.value} />
-      <div className="container" style={gridStyle}>
-        {createGrid(props.size)}
+      <div className="text-center">
+        <input type="text" id="name" defaultValue={sketch.name} placeholder={sketchId ? sketch.name : "New Sketch Name"} onChange={(event) => sketch.name = event.target.value} />
+        <div className="container" style={gridStyle}>
+          {createGrid(props.size)}
+        </div>
+        {/* <Button className="grid__newSketch" onClick={handleNewSketch}>New Sketch</Button> */}
+        <Button className="grid__save" disabled={isLoading} onClick={handleSaveGrid}>Save Sketch</Button>
       </div>
-      <Button className="grid__save" disabled={isLoading} onClick={handleSaveGrid}>Save Sketch</Button>
       <Modal animation={false} show={show} size="lg" centered >
         <Modal.Body><ProgressBar animated now={percentage} label={`Saving: ${Math.round(percentage)}%`} ></ProgressBar></Modal.Body>
       </Modal>
