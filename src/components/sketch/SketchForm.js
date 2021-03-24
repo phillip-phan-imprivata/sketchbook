@@ -14,14 +14,18 @@ export const SketchForm = () => {
 
   const history = useHistory()
 
+  //function for button click
   const handleCreateGrid = (event) => {
-    if (parseInt(gridInput) <= 100 && parseInt(gridInput) > 0) {
+    //redirects user to sketch page and renders sketchpad based on size in input
+    if (parseInt(gridInput) <= 50 && parseInt(gridInput) > 0) {
       history.push("/sketch")
+    //shows alert
     } else {
       setShowAlert(true)
     }
   }
 
+  //state variable in GridProvider changes when input value changes
   const handleInputChange = (event) => {
     setGridInput(event.target.value)
   }
@@ -34,14 +38,14 @@ export const SketchForm = () => {
           <InputGroup.Prepend>
             <InputGroup.Text>Grid Size: </InputGroup.Text>
           </InputGroup.Prepend>
-          <FormControl type="number" aria-label="Grid Size" aria-describedby="basic-addon1" placeholder="Number between 1-100" onChange={handleInputChange} />
+          <FormControl type="number" aria-label="Grid Size" aria-describedby="basic-addon1" placeholder="Number between 1-50" onChange={handleInputChange} />
           <InputGroup.Append>
             <Button onClick={handleCreateGrid}>Create Grid</Button>
           </InputGroup.Append>
         </InputGroup>
       </div>
     </div>
-    <Alert variant="danger" className="col-sm-4 offset-sm-4" show={showAlert} onClose={() => setShowAlert(false)} dismissible>
+    <Alert variant="danger" className="col-sm-4 offset-sm-4" show={showAlert} onClose={() => setShowAlert(false)} transition={false} dismissible>
       That's not a usable number!
     </Alert>
     </>

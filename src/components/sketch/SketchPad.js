@@ -160,7 +160,7 @@ export const SketchPad = (props) => {
   return (
     <>
       <div className="text-center">
-        <input type="text" id="name" defaultValue={sketch.name} placeholder={sketchId ? sketch.name : "New Sketch Name"} onChange={(event) => sketch.name = event.target.value} />
+        <input type="text" id="name" autoComplete="off" defaultValue={sketch.name} placeholder={sketchId ? sketch.name : "New Sketch Name"} onChange={(event) => sketch.name = event.target.value} />
         <div className="container" style={gridStyle}>
           {createGrid(sketch.size)}
         </div>
