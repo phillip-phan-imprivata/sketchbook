@@ -11,6 +11,10 @@ export const ApplicationViews = () => {
     <GridProvider>
     <SketchProvider>
       <Route exact path="/sketch">
+        <Sketch />
+      </Route>
+
+      <Route exact path="/sketchform">
         <SketchForm />
       </Route>
 

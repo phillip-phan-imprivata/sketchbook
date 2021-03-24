@@ -21,6 +21,7 @@ export const SketchProvider = (props) => {
     const savedSketch = {
       name: obj.name,
       userId: obj.userId,
+      size: obj.size
     }
     return fetch("http://localhost:8088/sketches", {
       method: "POST",
@@ -55,7 +56,8 @@ export const SketchProvider = (props) => {
     const updatedSketch = {
       id: obj.id,
       name: obj.name,
-      userId: obj.userId
+      userId: obj.userId,
+      size: obj.size
     }
     return fetch(`http://localhost:8088/sketches/${obj.id}`, {
       method: "PUT",

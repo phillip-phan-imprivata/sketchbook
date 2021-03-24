@@ -4,6 +4,7 @@ export const GridContext = createContext()
 
 export const GridProvider = (props) => {
   const [grids, setGrids] = useState([])
+  const [gridInput, setGridInput] = useState(0)
 
   const getGrids = () => {
     return fetch("http://localhost:8088/grids")
@@ -23,7 +24,7 @@ export const GridProvider = (props) => {
 
   return (
     <GridContext.Provider value={{
-      grids, getGrids, saveGrid
+      grids, getGrids, saveGrid, gridInput, setGridInput
     }}>
       {props.children}
     </GridContext.Provider>

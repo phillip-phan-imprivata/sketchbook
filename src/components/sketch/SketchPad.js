@@ -20,7 +20,7 @@ export const SketchPad = (props) => {
 
   const [sketch, setSketch] = useState({
     name: "",
-    size: props.size,
+    size: parseInt(props.size),
     userId: userId,
     grid: []
   })
@@ -46,10 +46,10 @@ export const SketchPad = (props) => {
 
   //styling for grid container
   const gridStyle = {
-    gridTemplateColumns: `repeat(${props.size}, 1fr)`,
-    gridTemplateRows: `repeat(${props.size}, 1fr)`,
+    gridTemplateColumns: `repeat(${sketch.size}, 1fr)`,
+    gridTemplateRows: `repeat(${sketch.size}, 1fr)`,
     height: "500px",
-    width: "500px"
+    width: "500px",
   }
 
   //function to get rid of ghost image when dragging a block
@@ -111,6 +111,10 @@ export const SketchPad = (props) => {
     }
   }
   
+  const handleNewSketch = (event) => {
+    history.push("/sketchform")
+  }
+
   //function to generate the initial grid
   const createGrid = (size) => {
     let initialGrid = []
@@ -129,6 +133,7 @@ export const SketchPad = (props) => {
   }
 
   useEffect(() => {
+    setIsLoading(true)
     //check to see if there is a sketchId to determine if editing or saving new sketch
     if (sketchId) {
       getSketchById(sketchId)
@@ -136,6 +141,7 @@ export const SketchPad = (props) => {
           let editSketch = {
             id: sketch.id,
             name: sketch.name,
+            size: sketch.size,
             userId: sketch.userId,
             grid: []
           }
@@ -156,9 +162,9 @@ export const SketchPad = (props) => {
       <div className="text-center">
         <input type="text" id="name" defaultValue={sketch.name} placeholder={sketchId ? sketch.name : "New Sketch Name"} onChange={(event) => sketch.name = event.target.value} />
         <div className="container" style={gridStyle}>
-          {createGrid(props.size)}
+          {createGrid(sketch.size)}
         </div>
-        {/* <Button className="grid__newSketch" onClick={handleNewSketch}>New Sketch</Button> */}
+        <Button className="grid__newSketch" onClick={handleNewSketch}>New Sketch</Button>
         <Button className="grid__save" disabled={isLoading} onClick={handleSaveGrid}>Save Sketch</Button>
       </div>
       <Modal animation={false} show={show} size="lg" centered >
