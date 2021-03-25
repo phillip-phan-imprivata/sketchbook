@@ -4,7 +4,7 @@ import { GridContext } from "../grid/GridProvider"
 export const SketchContext = createContext()
 
 export const SketchProvider = (props) => {
-  const {saveGrid} = useContext(GridContext)
+  const {saveGrid, deleteGrid} = useContext(GridContext)
   const [sketches, setSketches] = useState([])
 
   //timer to use with await in saveSketch
@@ -78,6 +78,16 @@ export const SketchProvider = (props) => {
           })
           await timer(100)
         }),
+          Promise.resolve()
+      )
+    })
+    .then(() => {
+      obj.erasedBlocks.reduce(
+        (chain, block) =>
+          chain.then(async () => {
+            deleteGrid(block)
+            await timer(100)
+          }),
           Promise.resolve()
       )
     })

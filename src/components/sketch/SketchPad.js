@@ -5,9 +5,11 @@ import { SketchContext } from "./SketchProvider"
 import Button from "react-bootstrap/Button"
 import ProgressBar from 'react-bootstrap/ProgressBar'
 import Modal from "react-bootstrap/Modal"
+import { GridContext } from "../grid/GridProvider"
 
 export const SketchPad = (props) => {
   const { saveSketch, getSketchById, updateSketch } = useContext(SketchContext)
+  const { getGrids, grids } = useContext(GridContext)
 
   const userId = parseInt(sessionStorage.app_user_id)
   const { sketchId } = useParams()
@@ -16,7 +18,9 @@ export const SketchPad = (props) => {
   const [isLoading, setIsLoading] = useState(true);
   const [percentage, setPercentage] = useState(0)
   const [show, setShow] = useState(false)
+  const [mode, setMode] = useState(true)
   const [savedGrid, setSavedGrid] = useState([])
+  const [erasedBlocks, setErasedBlocks] = useState([])
 
   const [sketch, setSketch] = useState({
     name: "",
@@ -31,14 +35,16 @@ export const SketchPad = (props) => {
 
   //function to stop the page from redirecting before the sketch is finished saving
   const load = async () => {
-    //makes the modal visible and show the progress bar
-    setShow(true)
-    //for loop that is the length of the amount of blocks being saved
-    for (var i = 0; i <= sketch.grid.length; i++) {
-      //updates the state variable percentage to match the progress of blocks being saved since the timing is constant
-      setPercentage((100/sketch.grid.length) * i)
-      //halts execution of async function until timeout completes
-      await timer(100);
+    if (sketch.grid.length !== 0){
+      //makes the modal visible and show the progress bar
+      setShow(true)
+      //for loop that is the length of the amount of blocks being saved
+      for (var i = 0; i <= sketch.grid.length; i++) {
+        //updates the state variable percentage to match the progress of blocks being saved since the timing is constant
+        setPercentage((100/sketch.grid.length) * i)
+        //halts execution of async function until timeout completes
+        await timer(100);
+      }      
     }
     //after the loop completes, the user is taken to sketchbook
     history.push("/sketchbook")
@@ -52,6 +58,14 @@ export const SketchPad = (props) => {
     width: "500px",
   }
 
+  const handleSketchMode = (event) => {
+    if (mode === true){
+      setMode(false)
+    } else {
+      setMode(true)
+    }
+  }
+
   //function to get rid of ghost image when dragging a block
   const handleDragStart = (event) => {
     //creates a new, blank image for the item being dragged
@@ -63,12 +77,36 @@ export const SketchPad = (props) => {
     const chosenItem = event.target
     const [prefix, id] = chosenItem.id.split("--")
     
-    //changes the background color by adding a class to the block
-    chosenItem.className = "grid color"
-    
-    //adds the block's id to the state variable's "grid" array if the id is not in there yet
-    if (sketch.grid.includes(parseInt(id)) === false) {
-      sketch.grid.push(parseInt(id))
+    if (mode === true){
+      //changes the background color by adding a class to the block
+      chosenItem.className = "grid color"
+      
+      //adds the block's id to the state variable's "grid" array if the id is not in there yet
+      if (sketch.grid.includes(parseInt(id)) === false && !savedGrid.includes(parseInt(id))) {
+        sketch.grid.push(parseInt(id))
+      }
+
+      if (erasedBlocks.includes(parseInt(id))){
+        let newErasedBlocks = [...erasedBlocks].filter(block => block !== parseInt(id))
+        setErasedBlocks(newErasedBlocks)
+      }
+    } else if (mode === false){
+      chosenItem.className = "grid"
+
+      if (!erasedBlocks.includes(parseInt(id)) && savedGrid.includes(parseInt(id))){
+        let newErasedBlocks = [...erasedBlocks]
+        newErasedBlocks.push(parseInt(id))
+        setErasedBlocks(newErasedBlocks)
+      }
+
+      if (sketch.grid.includes(parseInt(id)) === true) {
+        let newSketch = {...sketch}
+        const newGrid = sketch.grid.filter(block => block !== parseInt(id))
+        newSketch.grid = newGrid
+        setSketch(newSketch)
+        
+      }
+
     }
   }
 
@@ -81,20 +119,18 @@ export const SketchPad = (props) => {
       setIsLoading(true)
       //check to see if there is a sketchId to determine if editing or saving new sketch
       if (sketchId) {
-        //compare the previously saved grid with the current grid, and add the difference to "newGrid"
-        const newGrid = sketch.grid.map(block => {
-          if (savedGrid.includes(block) === false) {
-            return block
-          }
+        let matchingBlocks = erasedBlocks.map(block => {
+          let foundBlock = grids.find(gridItem => gridItem.blockId === block && gridItem.sketchId === sketch.id)
+          return foundBlock.id
         })
-
         //save the updated name and new blocks that were colored
         updateSketch({
           id: sketch.id,
           name: sketch.name,
           size: sketch.size,
           userId: sketch.userId,
-          grid: newGrid
+          grid: sketch.grid,
+          erasedBlocks: matchingBlocks
         })
         .then(load())
       } else {
@@ -134,38 +170,47 @@ export const SketchPad = (props) => {
 
   useEffect(() => {
     setIsLoading(true)
-    //check to see if there is a sketchId to determine if editing or saving new sketch
-    if (sketchId) {
-      getSketchById(sketchId)
-        .then(sketch => {
-          let editSketch = {
-            id: sketch.id,
-            name: sketch.name,
-            size: sketch.size,
-            userId: sketch.userId,
-            grid: []
-          }
-          //takes the associated blocks from grids resource and puts it into an array, which is set to the state variable savedGrid
-          let matchingGrid = sketch.grids.map(grid => grid.blockId)
-          setSavedGrid(matchingGrid)
-          //sets state variable sketch to contain the information of the sketch that the user wants to edit
-          setSketch(editSketch)
-          setIsLoading(false)
-        })
-    } else {
-      setIsLoading(false)
-    }
+    getGrids()
+    .then(() => {
+      //check to see if there is a sketchId to determine if editing or saving new sketch
+      if (sketchId) {
+        getSketchById(sketchId)
+          .then(sketch => {
+            let editSketch = {
+              id: sketch.id,
+              name: sketch.name,
+              size: sketch.size,
+              userId: sketch.userId,
+              grid: []
+            }
+            //takes the associated blocks from grids resource and puts it into an array, which is set to the state variable savedGrid
+            let matchingGrid = sketch.grids.map(grid => grid.blockId)
+            setSavedGrid(matchingGrid)
+            //sets state variable sketch to contain the information of the sketch that the user wants to edit
+            setSketch(editSketch)
+            setIsLoading(false)
+          })
+      } else {
+        setIsLoading(false)
+      }
+    })
   }, [])
 
   return (
     <>
       <div className="text-center">
-        <input type="text" id="name" defaultValue={sketch.name} placeholder={sketchId ? sketch.name : "New Sketch Name"} onChange={(event) => sketch.name = event.target.value} />
+        <input type="text" id="name" autoComplete="off" defaultValue={sketch.name} placeholder={sketchId ? sketch.name : "New Sketch Name"} onChange={(event) => sketch.name = event.target.value} />
         <div className="container" style={gridStyle}>
           {createGrid(sketch.size)}
         </div>
         <Button className="grid__newSketch" onClick={handleNewSketch}>New Sketch</Button>
-        <Button className="grid__save" disabled={isLoading} onClick={handleSaveGrid}>Save Sketch</Button>
+        <Button onClick={() => {
+          console.log("erasedBlocks", erasedBlocks)
+          console.log("coloredBlocks", sketch.grid)
+          console.log("savedGrid", savedGrid)
+        }}>log</Button>
+        {mode === true ? <Button className="grid__mode" onClick={handleSketchMode}>Eraser</Button> : <Button className="grid__mode" onClick={handleSketchMode}>Pencil</Button>}
+        <Button className="grid__saveSketch" disabled={isLoading} onClick={handleSaveGrid}>Save Sketch</Button>
       </div>
       <Modal animation={false} show={show} size="lg" centered >
         <Modal.Body><ProgressBar animated now={percentage} label={`Saving: ${Math.round(percentage)}%`} ></ProgressBar></Modal.Body>

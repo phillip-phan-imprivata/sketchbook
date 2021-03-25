@@ -22,9 +22,15 @@ export const GridProvider = (props) => {
     })
   }
 
+  const deleteGrid = (id) => {
+    return fetch(`http://localhost:8088/grids/${id}`, {
+      method: "DELETE",
+    })
+  }
+
   return (
     <GridContext.Provider value={{
-      grids, getGrids, saveGrid, gridInput, setGridInput
+      grids, getGrids, saveGrid, gridInput, setGridInput, deleteGrid
     }}>
       {props.children}
     </GridContext.Provider>

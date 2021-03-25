@@ -15,7 +15,7 @@ export const SketchForm = () => {
   const history = useHistory()
 
   const handleCreateGrid = (event) => {
-    if (parseInt(gridInput) <= 100 && parseInt(gridInput) > 0) {
+    if (parseInt(gridInput) <= 50 && parseInt(gridInput) > 0) {
       history.push("/sketch")
     } else {
       setShowAlert(true)
@@ -34,14 +34,14 @@ export const SketchForm = () => {
           <InputGroup.Prepend>
             <InputGroup.Text>Grid Size: </InputGroup.Text>
           </InputGroup.Prepend>
-          <FormControl type="number" aria-label="Grid Size" aria-describedby="basic-addon1" placeholder="Number between 1-100" onChange={handleInputChange} />
+          <FormControl type="number" aria-label="Grid Size" aria-describedby="basic-addon1" placeholder="Number between 1-50" onChange={handleInputChange} />
           <InputGroup.Append>
             <Button onClick={handleCreateGrid}>Create Grid</Button>
           </InputGroup.Append>
         </InputGroup>
       </div>
     </div>
-    <Alert variant="danger" className="col-sm-4 offset-sm-4" show={showAlert} onClose={() => setShowAlert(false)} dismissible>
+    <Alert variant="danger" transition={false} className="col-sm-4 offset-sm-4" show={showAlert} onClose={() => setShowAlert(false)} dismissible>
       That's not a usable number!
     </Alert>
     </>
