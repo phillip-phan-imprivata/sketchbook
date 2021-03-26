@@ -1,6 +1,7 @@
 import React, { useContext, useEffect } from "react"
 import { SketchContext } from "../sketch/SketchProvider"
 import { SketchCard } from "./SketchCard"
+import "./SketchBook.css"
 
 export const SketchBook = () => {
   const {sketches, getSketches} = useContext(SketchContext)

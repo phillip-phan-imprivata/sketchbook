@@ -1,12 +1,11 @@
 import React, { useContext, useState } from "react"
-import { SketchPad } from "./SketchPad"
-import Modal from "react-bootstrap/Modal"
 import InputGroup from "react-bootstrap/InputGroup"
 import FormControl from "react-bootstrap/FormControl"
-import Button from "react-bootstrap/Button"
 import Alert from "react-bootstrap/Alert"
 import { useHistory } from "react-router"
 import { GridContext } from "../grid/GridProvider"
+import Button from "react-bootstrap/Button"
+import "./SketchForm.css"
 
 export const SketchForm = () => {
   const [showAlert, setShowAlert] = useState(false)
@@ -32,22 +31,24 @@ export const SketchForm = () => {
 
   return (
     <>
-    <div className="row">
-      <div className="text-center col-sm-6 offset-sm-3">
-        <InputGroup>
-          <InputGroup.Prepend>
-            <InputGroup.Text>Grid Size: </InputGroup.Text>
-          </InputGroup.Prepend>
-          <FormControl type="number" aria-label="Grid Size" aria-describedby="basic-addon1" placeholder="Number between 1-50" onChange={handleInputChange} />
-          <InputGroup.Append>
-            <Button onClick={handleCreateGrid}>Create Grid</Button>
-          </InputGroup.Append>
-        </InputGroup>
+    <div className="formContainer">
+      <div className="row">
+        <div className="text-center col-sm-6 offset-sm-3">
+          <InputGroup>
+            <InputGroup.Prepend>
+              <InputGroup.Text className="form_label">Grid Size: </InputGroup.Text>
+            </InputGroup.Prepend>
+            <FormControl type="number" className="form_input" aria-label="Grid Size" aria-describedby="basic-addon1" placeholder="Number between 1-50" onChange={handleInputChange} autoFocus />
+            <InputGroup.Append>
+              <Button className="form_btn" onClick={handleCreateGrid}>Create Grid</Button>
+            </InputGroup.Append>
+          </InputGroup>
+        </div>
       </div>
+      <Alert variant="danger" className="col-sm-4 offset-sm-4" show={showAlert} onClose={() => setShowAlert(false)} transition={false} dismissible>
+        That's not a usable number!
+      </Alert>
     </div>
-    <Alert variant="danger" className="col-sm-4 offset-sm-4" show={showAlert} onClose={() => setShowAlert(false)} transition={false} dismissible>
-      That's not a usable number!
-    </Alert>
     </>
   )
 }

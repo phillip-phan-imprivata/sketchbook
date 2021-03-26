@@ -1,0 +1,32 @@
+.formContainer {
+  height: 100vh;
+  margin: 40vh auto;
+  float: none
+}
+
+.form_btn {
+  background-color: #C7DFC5;
+  border: 1px #373737 solid;
+  color: #373737
+}
+
+.form_btn:hover,
+.form_btn:focus,
+.form_btn:active:focus {
+  background-color: #373737 !important;
+  border: 1px #373737 solid;
+  color: #FCE694;
+  box-shadow: none !important;
+}
+
+.form_label {
+  background-color: #FCE694;
+  color: #373737; 
+  border: 1px #373737 solid;
+}
+
+.form_input,
+.form_input:active {
+  border: 1px #373737 solid !important;
+  box-shadow: none !important;
+}

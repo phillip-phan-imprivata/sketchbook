@@ -48,8 +48,8 @@ export const SketchPad = (props) => {
   const gridStyle = {
     gridTemplateColumns: `repeat(${sketch.size}, 1fr)`,
     gridTemplateRows: `repeat(${sketch.size}, 1fr)`,
-    height: "500px",
-    width: "500px",
+    height: "75vh",
+    width: "75vh",
   }
 
   //function to get rid of ghost image when dragging a block
@@ -160,7 +160,7 @@ export const SketchPad = (props) => {
   return (
     <>
       <div className="text-center">
-        <input type="text" id="name" autoComplete="off" defaultValue={sketch.name} placeholder={sketchId ? sketch.name : "New Sketch Name"} onChange={(event) => sketch.name = event.target.value} />
+        <input type="text" id="name" className="sketch__input" autoComplete="off" defaultValue={sketch.name} placeholder={sketchId ? sketch.name : "New Sketch Name"} onChange={(event) => sketch.name = event.target.value} />
         <div className="container" style={gridStyle}>
           {createGrid(sketch.size)}
         </div>
