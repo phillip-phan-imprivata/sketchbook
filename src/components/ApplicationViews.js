@@ -4,6 +4,7 @@ import { GridProvider } from "./grid/GridProvider"
 import { Sketch } from "./sketch/Sketch"
 import { SketchProvider } from "./sketch/SketchProvider"
 import { SketchBook } from "./sketchbook/SketchBook"
+import { SketchForm } from "./sketch/SketchForm"
 
 export const ApplicationViews = () => {
   return (
@@ -11,6 +12,10 @@ export const ApplicationViews = () => {
     <SketchProvider>
       <Route exact path="/sketch">
         <Sketch />
+      </Route>
+
+      <Route exact path="/sketchform">
+        <SketchForm />
       </Route>
 
       <Route exact path="/sketchbook">

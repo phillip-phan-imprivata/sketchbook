@@ -12,3 +12,11 @@
 .color {
   background: black;
 }
+
+.grid__save {
+  margin: 10px
+}
+
+#name {
+  margin: 10px
+}
