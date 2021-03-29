@@ -3,7 +3,9 @@
   background-color: #C7DFC5;
   border: 1px #373737 solid;
   color: #373737;
-  margin: 3px;
+  width: 20vh;
+  margin: 5px;
+  box-shadow: none !important
 }
 
 .btn-edit:hover,
@@ -13,9 +15,7 @@
 .btn-edit:active:focus,
 .btn-delete:active:focus {
   background-color: #373737 !important;
-  border: 1px #373737 solid;
   color: #FCE694;
-  box-shadow: none !important
 }
 
 .sketchCard {

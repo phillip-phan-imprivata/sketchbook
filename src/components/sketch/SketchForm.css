@@ -7,16 +7,15 @@
 .form_btn {
   background-color: #C7DFC5;
   border: 1px #373737 solid;
-  color: #373737
+  color: #373737;
+  box-shadow: none !important;
 }
 
 .form_btn:hover,
 .form_btn:focus,
 .form_btn:active:focus {
   background-color: #373737 !important;
-  border: 1px #373737 solid;
   color: #FCE694;
-  box-shadow: none !important;
 }
 
 .form_label {

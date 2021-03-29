@@ -6,6 +6,10 @@
   padding: 0;
 }
 
+.sketchpadContainer {
+  text-align: center;
+}
+
 .grid {
   border: 1px solid black;
 }
@@ -14,37 +18,50 @@
   background: black;
 }
 
-.grid__save {
-  margin: 10px
-}
-
-#name {
-  margin: 10px
-}
-
-.grid__newSketch,
-.grid__save {
-  background-color: #C7DFC5;
-  border: 1px #373737 solid;
-  color: #373737
-}
-
-.grid__newSketch:hover,
-.grid__save:hover,
-.grid__newSketch:focus,
-.grid__save:focus,
-.grid__newSketch:active:focus,
-.grid__save:active:focus {
-  background-color: #373737 !important;
-  border: 1px #373737 solid;
-  color: #FCE694;
-  box-shadow: none !important;
-}
-
 .sketch__input {
   border: 1px #373737 solid;
+  margin: 10px;
   outline: none;
   width: 50vh;
   text-align: center;
   border-radius: 5px;
+}
+
+.btn__settings { 
+  display: inline-block;
+  position: relative;
+  right: 50vh;
+  bottom: 60vh;
+}
+
+.grid__newSketch,
+.grid__save,
+.grid__mode,
+.grid__mode:active:focus,
+.grid__mode:focus,
+.grid__mode:hover {
+  background-color: #C7DFC5 !important;
+  border: 1px #373737 solid !important;
+  color: #373737;
+  box-shadow: none !important;
+  width: 18vh;
+  margin: 10px 5px;
+}
+
+.grid__newSketch:hover,
+.grid__newSketch:focus,
+.grid__newSketch:active:focus,
+.grid__save:hover,
+.grid__save:focus,
+.grid__save:active:focus {
+  background-color: #373737 !important;
+  color: #FCE694;
+}
+
+.selected,
+.selected:hover,
+.selected:active:focus,
+.selected:focus {
+  background-color: #373737 !important;
+  color: #FCE694;
 }
