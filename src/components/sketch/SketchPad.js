@@ -35,13 +35,21 @@ export const SketchPad = (props) => {
 
   //function to stop the page from redirecting before the sketch is finished saving
   const load = async () => {
-    if (sketch.grid.length !== 0){
+    let matchingBlocks = []
+    if (sketchId){
+      matchingBlocks = erasedBlocks.map(block => {
+        let foundBlock = grids.find(gridItem => gridItem.blockId === block && gridItem.sketchId === sketch.id)
+        return foundBlock.id
+      })
+    }
+
+    if (sketch.grid.length !== 0 || matchingBlocks.length !== 0){
       //makes the modal visible and show the progress bar
       setShow(true)
       //for loop that is the length of the amount of blocks being saved
-      for (var i = 0; i <= sketch.grid.length; i++) {
+      for (var i = 0; i <= (sketch.grid.length + matchingBlocks.length); i++) {
         //updates the state variable percentage to match the progress of blocks being saved since the timing is constant
-        setPercentage((100/sketch.grid.length) * i)
+        setPercentage((100/(sketch.grid.length + matchingBlocks.length)) * i)
         //halts execution of async function until timeout completes
         await timer(100);
       }      

@@ -81,7 +81,8 @@ export const SketchProvider = (props) => {
           Promise.resolve()
       )
     })
-    .then(() => {
+    .then(async() => {
+      await timer(obj.grid.length * 100)
       obj.erasedBlocks.reduce(
         (chain, block) =>
           chain.then(async () => {
