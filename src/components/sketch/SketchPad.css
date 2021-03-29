@@ -1,8 +1,13 @@
 .container {
   background: white;
   display: grid;
-  height: 600px;
-  width: 600px
+  height: 75vh;
+  width: 75vh;
+  padding: 0;
+}
+
+.sketchpadContainer {
+  text-align: center;
 }
 
 .grid {
@@ -13,10 +18,50 @@
   background: black;
 }
 
-.grid__save {
-  margin: 10px
+.sketch__input {
+  border: 1px #373737 solid;
+  margin: 10px;
+  outline: none;
+  width: 50vh;
+  text-align: center;
+  border-radius: 5px;
 }
 
-#name {
-  margin: 10px
+.btn__settings { 
+  display: inline-block;
+  position: relative;
+  right: 50vh;
+  bottom: 60vh;
+}
+
+.grid__newSketch,
+.grid__save,
+.grid__mode,
+.grid__mode:active:focus,
+.grid__mode:focus,
+.grid__mode:hover {
+  background-color: #C7DFC5 !important;
+  border: 1px #373737 solid !important;
+  color: #373737;
+  box-shadow: none !important;
+  width: 18vh;
+  margin: 10px 5px;
+}
+
+.grid__newSketch:hover,
+.grid__newSketch:focus,
+.grid__newSketch:active:focus,
+.grid__save:hover,
+.grid__save:focus,
+.grid__save:active:focus {
+  background-color: #373737 !important;
+  color: #FCE694;
+}
+
+.selected,
+.selected:hover,
+.selected:active:focus,
+.selected:focus {
+  background-color: #373737 !important;
+  color: #FCE694;
 }

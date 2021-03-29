@@ -1,0 +1,38 @@
+.btn-edit,
+.btn-delete {
+  background-color: #C7DFC5;
+  border: 1px #373737 solid;
+  color: #373737;
+  width: 20vh;
+  margin: 5px;
+  box-shadow: none !important
+}
+
+.btn-edit:hover,
+.btn-delete:hover,
+.btn-edit:focus,
+.btn-delete:focus,
+.btn-edit:active:focus,
+.btn-delete:active:focus {
+  background-color: #373737 !important;
+  color: #FCE694;
+}
+
+.sketchCard {
+  color: #373737;
+  margin: 20px 10px;
+  text-align: center;
+  width: 50vh;
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+}
+
+.sketchCard__card {
+  background-color: #FCE694;
+}
+
+.sketches {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 0 10px;
+}

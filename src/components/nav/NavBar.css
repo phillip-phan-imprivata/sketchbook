@@ -2,6 +2,15 @@
   display: flex;
   flex-wrap: nowrap;
   justify-content: left;
+  background-color: #373737;
+}
+
+.nav-link {
+  color: #FCE694
+}
+
+.nav-link:hover {
+  color: #C7DFC5
 }
 
 .navbar__item {

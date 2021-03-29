@@ -4,6 +4,7 @@ import { Register } from "./components/auth/Register"
 import { userStorageKey } from "./components/auth/authSettings"
 import { NavBar } from "./components/nav/NavBar"
 import { ApplicationViews } from "./components/ApplicationViews"
+import "./App.css"
 
 function App() {
   return (

@@ -18,6 +18,8 @@ export const SketchPad = (props) => {
   const [isLoading, setIsLoading] = useState(true);
   const [percentage, setPercentage] = useState(0)
   const [show, setShow] = useState(false)
+  //when mode === true, user draws
+  //when mode === false, user erases
   const [mode, setMode] = useState(true)
   const [savedGrid, setSavedGrid] = useState([])
   const [erasedBlocks, setErasedBlocks] = useState([])
@@ -62,15 +64,17 @@ export const SketchPad = (props) => {
   const gridStyle = {
     gridTemplateColumns: `repeat(${sketch.size}, 1fr)`,
     gridTemplateRows: `repeat(${sketch.size}, 1fr)`,
-    height: "500px",
-    width: "500px",
+    height: "75vh",
+    width: "75vh",
   }
 
   const handleSketchMode = (event) => {
-    if (mode === true){
-      setMode(false)
-    } else {
-      setMode(true)
+    if (!event.target.className.includes("selected")){
+      if (mode === true){
+        setMode(false)
+      } else {
+        setMode(true)
+      }
     }
   }
 
@@ -206,20 +210,24 @@ export const SketchPad = (props) => {
 
   return (
     <>
-      <div className="text-center">
-        <input type="text" id="name" autoComplete="off" defaultValue={sketch.name} placeholder={sketchId ? sketch.name : "New Sketch Name"} onChange={(event) => sketch.name = event.target.value} />
-        <div className="container" style={gridStyle}>
-          {createGrid(sketch.size)}
+        <div className="sketchpadContainer">
+          <input type="text" id="name" className="sketch__input" autoComplete="off" defaultValue={sketch.name} placeholder={sketchId ? sketch.name : "New Sketch Name"} onChange={(event) => sketch.name = event.target.value} />
+          <div className="container" style={gridStyle}>
+            {createGrid(sketch.size)}
+          </div>
+          <Button className="grid__newSketch" onClick={handleNewSketch}>New Sketch</Button>
+          <Button className="grid__save" disabled={isLoading} onClick={handleSaveGrid}>Save Sketch</Button>
+          <div>
+            <div className="btn__settings">
+              <div className="btn__pencil">
+                <Button className={mode ? "grid__mode selected" : "grid__mode"} onClick={handleSketchMode}>Pencil</Button>
+              </div>
+              <div className="btn__eraser">
+                <Button className={mode ? "grid__mode" : "grid__mode selected"} onClick={handleSketchMode}>Eraser</Button>
+              </div>
+            </div>
+          </div>
         </div>
-        <Button className="grid__newSketch" onClick={handleNewSketch}>New Sketch</Button>
-        <Button onClick={() => {
-          console.log("erasedBlocks", erasedBlocks)
-          console.log("coloredBlocks", sketch.grid)
-          console.log("savedGrid", savedGrid)
-        }}>log</Button>
-        {mode === true ? <Button className="grid__mode" onClick={handleSketchMode}>Eraser</Button> : <Button className="grid__mode" onClick={handleSketchMode}>Pencil</Button>}
-        <Button className="grid__saveSketch" disabled={isLoading} onClick={handleSaveGrid}>Save Sketch</Button>
-      </div>
       <Modal animation={false} show={show} size="lg" centered >
         <Modal.Body><ProgressBar animated now={percentage} label={`Saving: ${Math.round(percentage)}%`} ></ProgressBar></Modal.Body>
       </Modal>
