@@ -6,10 +6,11 @@ import Button from "react-bootstrap/Button"
 import ProgressBar from 'react-bootstrap/ProgressBar'
 import Modal from "react-bootstrap/Modal"
 import { GridContext } from "../grid/GridProvider"
+import { BlockPicker } from "react-color/lib/index"
 
 export const SketchPad = (props) => {
   const { saveSketch, getSketchById, updateSketch } = useContext(SketchContext)
-  const { getGrids, grids } = useContext(GridContext)
+  const { getGrids, grids, color, setColor } = useContext(GridContext)
 
   const userId = parseInt(sessionStorage.app_user_id)
   const { sketchId } = useParams()
@@ -17,12 +18,13 @@ export const SketchPad = (props) => {
 
   const [isLoading, setIsLoading] = useState(true);
   const [percentage, setPercentage] = useState(0)
-  const [show, setShow] = useState(false)
+  const [showLoading, setShowLoading] = useState(false)
   //when mode === true, user draws
   //when mode === false, user erases
   const [mode, setMode] = useState(true)
   const [savedGrid, setSavedGrid] = useState([])
   const [erasedBlocks, setErasedBlocks] = useState([])
+  const [showColorPicker, setShowColorPicker] = useState(false)
 
   const [sketch, setSketch] = useState({
     name: "",
@@ -30,6 +32,14 @@ export const SketchPad = (props) => {
     userId: userId,
     grid: []
   })
+
+  //styling for grid container
+  const gridStyle = {
+    gridTemplateColumns: `repeat(${sketch.size}, 1fr)`,
+    gridTemplateRows: `repeat(${sketch.size}, 1fr)`,
+    height: "75vh",
+    width: "75vh",
+  }
 
   //returns a Promise that resolves after "ms" Milliseconds
   //sets timeout to slow down promise execution to match how fast objects are being saved in provider
@@ -47,7 +57,7 @@ export const SketchPad = (props) => {
 
     if (sketch.grid.length !== 0 || matchingBlocks.length !== 0){
       //makes the modal visible and show the progress bar
-      setShow(true)
+      setShowLoading(true)
       //for loop that is the length of the amount of blocks being saved
       for (var i = 0; i <= (sketch.grid.length + matchingBlocks.length); i++) {
         //updates the state variable percentage to match the progress of blocks being saved since the timing is constant
@@ -60,14 +70,6 @@ export const SketchPad = (props) => {
     history.push("/sketchbook")
   }
 
-  //styling for grid container
-  const gridStyle = {
-    gridTemplateColumns: `repeat(${sketch.size}, 1fr)`,
-    gridTemplateRows: `repeat(${sketch.size}, 1fr)`,
-    height: "75vh",
-    width: "75vh",
-  }
-
   const handleSketchMode = (event) => {
     if (!event.target.className.includes("selected")){
       if (mode === true){
@@ -76,6 +78,15 @@ export const SketchPad = (props) => {
         setMode(true)
       }
     }
+  }
+
+  const handleColorButton = (event) => {
+    setShowColorPicker(!showColorPicker)
+  }
+
+  const handleColorChange = (color, event) => {
+    setColor(color.hex)
+    setShowColorPicker(!showColorPicker)
   }
 
   //function to get rid of ghost image when dragging a block
@@ -91,7 +102,7 @@ export const SketchPad = (props) => {
     
     if (mode === true){
       //changes the background color by adding a class to the block
-      chosenItem.className = "grid color"
+      chosenItem.style.backgroundColor = color
       
       //adds the block's id to the state variable's "grid" array if the id is not in there yet
       if (sketch.grid.includes(parseInt(id)) === false && !savedGrid.includes(parseInt(id))) {
@@ -103,7 +114,7 @@ export const SketchPad = (props) => {
         setErasedBlocks(newErasedBlocks)
       }
     } else if (mode === false){
-      chosenItem.className = "grid"
+      chosenItem.style.backgroundColor = "#ffffff"
 
       if (!erasedBlocks.includes(parseInt(id)) && savedGrid.includes(parseInt(id))){
         let newErasedBlocks = [...erasedBlocks]
@@ -172,7 +183,7 @@ export const SketchPad = (props) => {
       //if the grid was loaded for editing, savedGrid will contain the id's of colored grids
       //creates a colored block if the grid id is included in the savedGrid array
       if (savedGrid.includes(i)) {
-        initialGrid.push(<div className="grid color" key={i} id={`grid--${i}`} draggable="true" onDragStart={handleDragStart} onDragOver={handleGridDrag}></div>)
+        initialGrid.push(<div className="grid" key={i} id={`grid--${i}`} draggable="true" onDragStart={handleDragStart} onDragOver={handleGridDrag}></div>)
       } else {
         initialGrid.push(<div className="grid" key={i} id={`grid--${i}`} draggable="true" onDragStart={handleDragStart} onDragOver={handleGridDrag}></div>)
       }
@@ -210,25 +221,29 @@ export const SketchPad = (props) => {
 
   return (
     <>
-        <div className="sketchpadContainer">
-          <input type="text" id="name" className="sketch__input" autoComplete="off" defaultValue={sketch.name} placeholder={sketchId ? sketch.name : "New Sketch Name"} onChange={(event) => sketch.name = event.target.value} />
-          <div className="container" style={gridStyle}>
-            {createGrid(sketch.size)}
-          </div>
-          <Button className="grid__newSketch" onClick={handleNewSketch}>New Sketch</Button>
-          <Button className="grid__save" disabled={isLoading} onClick={handleSaveGrid}>Save Sketch</Button>
-          <div>
-            <div className="btn__settings">
-              <div className="btn__pencil">
-                <Button className={mode ? "grid__mode selected" : "grid__mode"} onClick={handleSketchMode}>Pencil</Button>
-              </div>
-              <div className="btn__eraser">
-                <Button className={mode ? "grid__mode" : "grid__mode selected"} onClick={handleSketchMode}>Eraser</Button>
-              </div>
+      <div className="sketchpadContainer">
+        <input type="text" id="name" className="sketch__input" autoComplete="off" defaultValue={sketch.name} placeholder={sketchId ? sketch.name : "New Sketch Name"} onChange={(event) => sketch.name = event.target.value} />
+        <div className="container" style={gridStyle}>
+          {createGrid(sketch.size)}
+        </div>
+        <Button className="grid__newSketch" onClick={handleNewSketch}>New Sketch</Button>
+        <Button className="grid__save" disabled={isLoading} onClick={handleSaveGrid}>Save Sketch</Button>
+        <div>
+          <div className="btn__settings">
+            <div className="settings__pencil">
+              <Button className={mode ? "grid__mode selected" : "grid__mode"} onClick={handleSketchMode}>Pencil</Button>
+            </div>
+            <div className="settings__eraser">
+              <Button className={mode ? "grid__mode" : "grid__mode selected"} onClick={handleSketchMode}>Eraser</Button>
+            </div>
+            <div className="settings__color">
+              <Button className="grid__color" onClick={handleColorButton} >Color</Button>
+              {showColorPicker ? <BlockPicker color={color} onChangeComplete={handleColorChange} /> : null}
             </div>
           </div>
         </div>
-      <Modal animation={false} show={show} size="lg" centered >
+      </div>
+      <Modal animation={false} show={showLoading} size="lg" centered >
         <Modal.Body><ProgressBar animated now={percentage} label={`Saving: ${Math.round(percentage)}%`} ></ProgressBar></Modal.Body>
       </Modal>
     </>
