@@ -50,8 +50,9 @@ export const SketchPad = (props) => {
     let matchingBlocks = []
     if (sketchId){
       matchingBlocks = erasedBlocks.map(block => {
-        let foundBlock = grids.find(gridItem => gridItem.blockId === block && gridItem.sketchId === sketch.id)
-        return foundBlock.id
+        return block.id
+        // let foundBlock = grids.find(gridItem => gridItem.blockId === block && gridItem.sketchId === sketch.id)
+        // return foundBlock.id
       })
     }
 
@@ -94,42 +95,68 @@ export const SketchPad = (props) => {
     //creates a new, blank image for the item being dragged
     event.dataTransfer.setDragImage(new Image(), 0, 0)
   }
-  
+
   //function to change the color of the block that is dragged over
   const handleGridDrag = (event) => {
     const chosenItem = event.target
     const [prefix, id] = chosenItem.id.split("--")
+    const currentGridBlock = sketch.grid.find(block => block.blockId === parseInt(id))
+    const savedGridBlock = savedGrid.find(block => block.blockId === parseInt(id))
+    const foundErasedBlock = erasedBlocks.find(block => block.blockId === parseInt(id))
     
     if (mode === true){
-      //changes the background color by adding a class to the block
+      //changes the background color by changing the style of the block
       chosenItem.style.backgroundColor = color
       
-      //adds the block's id to the state variable's "grid" array if the id is not in there yet
-      if (sketch.grid.includes(parseInt(id)) === false && !savedGrid.includes(parseInt(id))) {
-        sketch.grid.push(parseInt(id))
+      if (currentGridBlock === undefined) {
+        sketch.grid.push({
+            "blockId": parseInt(id),
+            "blockColor": color
+          })
+      } else if (currentGridBlock !== undefined) {
+        let newSketch = {...sketch}
+        newSketch.grid = newSketch.grid.filter(block => block.blockId !== parseInt(id))
+        newSketch.grid.push({
+          "blockId": parseInt(id),
+          "blockColor": color
+        })
+        setSketch(newSketch)
       }
 
-      if (erasedBlocks.includes(parseInt(id))){
-        let newErasedBlocks = [...erasedBlocks].filter(block => block !== parseInt(id))
-        setErasedBlocks(newErasedBlocks)
+      if (savedGridBlock !== undefined) {
+        if (savedGridBlock.blockColor === color){
+          let newSketch = {...sketch}
+          newSketch.grid = newSketch.grid.filter(block => block.blockId !== parseInt(id))
+          setSketch(newSketch)
+        } else if (foundErasedBlock === undefined){
+          erasedBlocks.push({
+            "blockId": parseInt(id),
+            "blockColor": savedGridBlock.blockColor,
+            "id": savedGridBlock.id
+          })
+        }
+      }
+
+      if (foundErasedBlock !== undefined && foundErasedBlock.blockColor === color){
+        setErasedBlocks([...erasedBlocks].filter(block => block.blockId !== parseInt(id)))
       }
     } else if (mode === false){
       chosenItem.style.backgroundColor = "#ffffff"
 
-      if (!erasedBlocks.includes(parseInt(id)) && savedGrid.includes(parseInt(id))){
-        let newErasedBlocks = [...erasedBlocks]
-        newErasedBlocks.push(parseInt(id))
-        setErasedBlocks(newErasedBlocks)
+      if (foundErasedBlock === undefined && savedGridBlock !== undefined){
+        erasedBlocks.push({
+          "blockId": parseInt(id),
+          "blockColor": savedGridBlock.blockColor,
+          "id": savedGridBlock.id
+        })
       }
 
-      if (sketch.grid.includes(parseInt(id)) === true) {
+      if (currentGridBlock !== undefined) {
         let newSketch = {...sketch}
-        const newGrid = sketch.grid.filter(block => block !== parseInt(id))
+        const newGrid = sketch.grid.filter(block => block.blockId !== parseInt(id))
         newSketch.grid = newGrid
         setSketch(newSketch)
-        
       }
-
     }
   }
 
@@ -143,8 +170,9 @@ export const SketchPad = (props) => {
       //check to see if there is a sketchId to determine if editing or saving new sketch
       if (sketchId) {
         let matchingBlocks = erasedBlocks.map(block => {
-          let foundBlock = grids.find(gridItem => gridItem.blockId === block && gridItem.sketchId === sketch.id)
-          return foundBlock.id
+          return block.id
+          // let foundBlock = grids.find(gridItem => gridItem.blockId === block && gridItem.sketchId === sketch.id)
+          // return foundBlock.id
         })
         //save the updated name and new blocks that were colored
         updateSketch({
@@ -182,8 +210,9 @@ export const SketchPad = (props) => {
     for (let i = 1; i <= size * size; i++) {
       //if the grid was loaded for editing, savedGrid will contain the id's of colored grids
       //creates a colored block if the grid id is included in the savedGrid array
-      if (savedGrid.includes(i)) {
-        initialGrid.push(<div className="grid" key={i} id={`grid--${i}`} draggable="true" onDragStart={handleDragStart} onDragOver={handleGridDrag}></div>)
+      if (savedGrid.find(block => block.blockId === i) !== undefined) {
+        const foundBlock = savedGrid.find(block => block.blockId === i)
+        initialGrid.push(<div className="grid" style={{backgroundColor: foundBlock.blockColor}} key={i} id={`grid--${i}`} draggable="true" onDragStart={handleDragStart} onDragOver={handleGridDrag}></div>)
       } else {
         initialGrid.push(<div className="grid" key={i} id={`grid--${i}`} draggable="true" onDragStart={handleDragStart} onDragOver={handleGridDrag}></div>)
       }
@@ -207,8 +236,8 @@ export const SketchPad = (props) => {
               grid: []
             }
             //takes the associated blocks from grids resource and puts it into an array, which is set to the state variable savedGrid
-            let matchingGrid = sketch.grids.map(grid => grid.blockId)
-            setSavedGrid(matchingGrid)
+            // let matchingGrid = sketch.grids.map(grid => grid.blockId)
+            setSavedGrid(sketch.grids)
             //sets state variable sketch to contain the information of the sketch that the user wants to edit
             setSketch(editSketch)
             setIsLoading(false)
@@ -226,6 +255,11 @@ export const SketchPad = (props) => {
         <div className="container" style={gridStyle}>
           {createGrid(sketch.size)}
         </div>
+        <Button onClick={() => {
+          console.log("grid", sketch.grid)
+          console.log("erased", erasedBlocks)
+          console.log("savedGrid", savedGrid)
+        }}>log</Button>
         <Button className="grid__newSketch" onClick={handleNewSketch}>New Sketch</Button>
         <Button className="grid__save" disabled={isLoading} onClick={handleSaveGrid}>Save Sketch</Button>
         <div>

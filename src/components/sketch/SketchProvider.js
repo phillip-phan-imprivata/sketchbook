@@ -40,7 +40,8 @@ export const SketchProvider = (props) => {
         .then(async () => {
           saveGrid({
             sketchId: sketch.id,
-            blockId: block
+            blockId: block.blockId,
+            blockColor: block.blockColor
           })
           //halts execution of async function until timeout completes
           await timer(100)
@@ -53,6 +54,14 @@ export const SketchProvider = (props) => {
   }
 
   const updateSketch = (obj) => {
+    obj.erasedBlocks.reduce(
+      (chain, block) =>
+        chain.then(async () => {
+          deleteGrid(block)
+          await timer(100)
+        }),
+        Promise.resolve()
+    )
     const updatedSketch = {
       id: obj.id,
       name: obj.name,
@@ -67,31 +76,33 @@ export const SketchProvider = (props) => {
       body: JSON.stringify(updatedSketch)
     })
     .then(res => res.json())
-    .then(() => {
+    .then(async () => {
+      await timer(obj.erasedBlocks.length * 100)
       //same method as in saveSketch
       obj.grid.reduce(
         (chain, block) => 
           chain.then(async () => {
           saveGrid({
             sketchId: obj.id,
-            blockId: block
+            blockId: block.blockId,
+            blockColor: block.blockColor
           })
           await timer(100)
         }),
           Promise.resolve()
       )
     })
-    .then(async() => {
-      await timer(obj.grid.length * 100)
-      obj.erasedBlocks.reduce(
-        (chain, block) =>
-          chain.then(async () => {
-            deleteGrid(block)
-            await timer(100)
-          }),
-          Promise.resolve()
-      )
-    })
+    // .then(async() => {
+    //   await timer(obj.grid.length * 100)
+    //   obj.erasedBlocks.reduce(
+    //     (chain, block) =>
+    //       chain.then(async () => {
+    //         deleteGrid(block)
+    //         await timer(100)
+    //       }),
+    //       Promise.resolve()
+    //   )
+    // })
   }
 
   const deleteSketch = (id) => {
