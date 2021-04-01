@@ -16,7 +16,7 @@ export const SketchForm = () => {
   //function for button click
   const handleCreateGrid = (event) => {
     //redirects user to sketch page and renders sketchpad based on size in input
-    if (parseInt(gridInput) <= 50 && parseInt(gridInput) > 0) {
+    if (parseInt(gridInput) <= 10 && parseInt(gridInput) > 0) {
       history.push("/sketch")
     //shows alert
     } else {
@@ -32,15 +32,16 @@ export const SketchForm = () => {
   return (
     <>
     <div className="formContainer">
+      <div className="logo">SketchBook</div>
       <div className="row">
         <div className="text-center col-sm-6 offset-sm-3">
           <InputGroup>
             <InputGroup.Prepend>
-              <InputGroup.Text className="form_label">Grid Size: </InputGroup.Text>
+              <InputGroup.Text className="form_label">SketchPad Size: </InputGroup.Text>
             </InputGroup.Prepend>
-            <FormControl type="number" className="form_input" aria-label="Grid Size" aria-describedby="basic-addon1" placeholder="Number between 1-50" onChange={handleInputChange} autoFocus />
+            <FormControl type="number" className="form_input" aria-label="Grid Size" aria-describedby="basic-addon1" placeholder="Number between 1-10" onChange={handleInputChange} autoFocus />
             <InputGroup.Append>
-              <Button className="form_btn" onClick={handleCreateGrid}>Create Grid</Button>
+              <Button className="form_btn" onClick={handleCreateGrid}>Start Sketch</Button>
             </InputGroup.Append>
           </InputGroup>
         </div>
