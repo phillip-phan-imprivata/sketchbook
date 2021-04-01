@@ -12,7 +12,7 @@ export const SketchProvider = (props) => {
   const timer = ms => new Promise(res => setTimeout(res, ms))
 
   const getSketches = () => {
-    return fetch("http://localhost:8088/sketches")
+    return fetch("http://localhost:8088/sketches?_embed=grids")
     .then(res => res.json())
     .then(setSketches)
   }
@@ -92,17 +92,6 @@ export const SketchProvider = (props) => {
           Promise.resolve()
       )
     })
-    // .then(async() => {
-    //   await timer(obj.grid.length * 100)
-    //   obj.erasedBlocks.reduce(
-    //     (chain, block) =>
-    //       chain.then(async () => {
-    //         deleteGrid(block)
-    //         await timer(100)
-    //       }),
-    //       Promise.resolve()
-    //   )
-    // })
   }
 
   const deleteSketch = (id) => {

@@ -10,7 +10,7 @@ export const ApplicationViews = () => {
   return (
     <GridProvider>
     <SketchProvider>
-      <Route exact path="/sketch">
+      <Route exact path="/sketchpad">
         <Sketch />
       </Route>
 

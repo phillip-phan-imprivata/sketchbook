@@ -17,7 +17,7 @@ export const SketchForm = () => {
   const handleCreateGrid = (event) => {
     //redirects user to sketch page and renders sketchpad based on size in input
     if (parseInt(gridInput) <= 10 && parseInt(gridInput) > 0) {
-      history.push("/sketch")
+      history.push("/sketchpad")
     //shows alert
     } else {
       setShowAlert(true)
