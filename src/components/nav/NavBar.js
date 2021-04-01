@@ -8,10 +8,10 @@ export const NavBar = (props) => {
     <nav className="navbar flex-md-nowrap p-0 shadow">
       <ul className="nav">
         <li className="nav-item">
-          <Link className="nav-link" to="/sketchform">Sketch</Link>
+          <Link className="nav-link" to="/sketchform">SketchPad</Link>
         </li>
         <li className="nav-item">
-          <Link className="nav-link" to="/sketchbook">Sketchbook</Link>
+          <Link className="nav-link" to="/sketchbook">SketchBook</Link>
         </li>
       </ul>
       <ul className="nav nav-logout">

@@ -1,7 +1,7 @@
 .btn-edit,
 .btn-delete {
   background-color: #C7DFC5;
-  border: 1px #373737 solid;
+  border: 1px #373737 solid !important;
   color: #373737;
   width: 20vh;
   margin: 5px;

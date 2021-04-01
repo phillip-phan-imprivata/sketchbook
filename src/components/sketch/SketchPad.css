@@ -1,5 +1,5 @@
 .container {
-  background: white;
+  background: #ffffff;
   display: grid;
   height: 75vh;
   width: 75vh;
@@ -11,11 +11,11 @@
 }
 
 .grid {
-  border: 1px solid black;
+  border: 1px solid #000000;
 }
 
 .color {
-  background: black;
+  background: #000000;
 }
 
 .sketch__input {
@@ -37,6 +37,7 @@
 .grid__newSketch,
 .grid__save,
 .grid__mode,
+.grid__color,
 .grid__mode:active:focus,
 .grid__mode:focus,
 .grid__mode:hover {
@@ -53,7 +54,10 @@
 .grid__newSketch:active:focus,
 .grid__save:hover,
 .grid__save:focus,
-.grid__save:active:focus {
+.grid__save:active:focus,
+.grid__color:hover,
+.grid__color:focus,
+.grid__color:active:focus {
   background-color: #373737 !important;
   color: #FCE694;
 }
