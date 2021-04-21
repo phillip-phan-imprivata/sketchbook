@@ -8,13 +8,13 @@ export const GridProvider = (props) => {
   const [color, setColor] = useState("#000000")
 
   const getGrids = () => {
-    return fetch("http://localhost:8088/grids")
+    return fetch("https://sketchbook-api.herokuapp.com/grids")
     .then(res => res.json())
     .then(setGrids)
   }
 
   const saveGrid = (obj) => {
-    return fetch("http://localhost:8088/grids", {
+    return fetch("https://sketchbook-api.herokuapp.com/grids", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -24,7 +24,7 @@ export const GridProvider = (props) => {
   }
 
   const deleteGrid = (id) => {
-    return fetch(`http://localhost:8088/grids/${id}`, {
+    return fetch(`https://sketchbook-api.herokuapp.com/grids/${id}`, {
       method: "DELETE",
     })
   }
