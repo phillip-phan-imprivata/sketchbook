@@ -12,7 +12,7 @@ export const SketchProvider = (props) => {
   const timer = ms => new Promise(res => setTimeout(res, ms))
 
   const getSketches = () => {
-    return fetch("http://localhost:8088/sketches?_embed=grids")
+    return fetch("https://sketchbook-api.herokuapp.com/sketches?_embed=grids")
     .then(res => res.json())
     .then(setSketches)
   }
@@ -23,7 +23,7 @@ export const SketchProvider = (props) => {
       userId: obj.userId,
       size: obj.size
     }
-    return fetch("http://localhost:8088/sketches", {
+    return fetch("https://sketchbook-api.herokuapp.com/sketches", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -68,7 +68,7 @@ export const SketchProvider = (props) => {
       userId: obj.userId,
       size: obj.size
     }
-    return fetch(`http://localhost:8088/sketches/${obj.id}`, {
+    return fetch(`https://sketchbook-api.herokuapp.com/sketches/${obj.id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json"
@@ -95,14 +95,14 @@ export const SketchProvider = (props) => {
   }
 
   const deleteSketch = (id) => {
-    return fetch(`http://localhost:8088/sketches/${id}`, {
+    return fetch(`https://sketchbook-api.herokuapp.com/sketches/${id}`, {
       method: "DELETE"
     })
     .then(getSketches)
   }
 
   const getSketchById = (id) => {
-    return fetch(`http://localhost:8088/sketches/${id}?_embed=grids`)
+    return fetch(`https://sketchbook-api.herokuapp.com/sketches/${id}?_embed=grids`)
     .then(res => res.json())
   }
 
